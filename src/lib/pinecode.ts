@@ -8,6 +8,8 @@ import {
 import { getEmbeddings } from "./embeddings";
 import { convertToAscii } from "./utils";
 import axios from "axios";
+import fs from "fs";
+import path from "path";
 
 export const getPineconeClient = () => {
   return new Pinecone({
@@ -49,10 +51,16 @@ export async function loadPdftoPinecone(
   // 1 obtain pdf
   console.log("downloading file from uploadthing");
 
-  const pdfLoader = new PDFLoader(file_url);
-  console.log(pdfLoader, "loader");
-  const pages = (await pdfLoader.load()) as PDFPage[];
+  const response = await axios.get(file_url);
+  const pdfData = Buffer.from(response.data);
 
+  // Save the downloaded file to a temporary location
+  const tempFilePath = path.join(__dirname, "temp", file_name);
+  fs.writeFileSync(tempFilePath, pdfData);
+
+  // Load the PDF file using the local file path
+  const pdfLoader = new PDFLoader(tempFilePath);
+  const pages = (await pdfLoader.load()) as PDFPage[];
   console.log("2 step", pages);
 
   // split and segment the pdf
@@ -69,6 +77,13 @@ export async function loadPdftoPinecone(
 
   console.log("inserting vectors into pinecone");
   await namespace.upsert(vectors);
+
+  // Handle the loaded PDF pages
+  console.log("Loaded", pages.length, "pages from PDF:", file_name);
+  // Do whatever processing you need to do with the pages
+
+  // Cleanup: Remove the temporary file
+  fs.unlinkSync(tempFilePath);
 
   return docs[0];
 }
