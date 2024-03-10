@@ -4,16 +4,19 @@ import { Button } from "@/components/ui/button";
 import { UserButton, auth, currentUser, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { ArrowRight, Loader2, LogIn } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import FileUpload from "@/components/file-upload";
+import { db } from "@/lib/db";
+import { chats } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 export default function Home() {
   const { isLoaded, isSignedIn, user } = useUser();
   const isAuth = !!user?.id;
   const isPro = true; // todo check subscription
 
-  let firstChat: any; // todo get the first chat from database
+  const [firstChat, setFirstChat] = useState<any>(null); // State for firstChat
 
   useEffect(() => {
     if (isLoaded === true && isSignedIn === true) {
@@ -22,6 +25,21 @@ export default function Home() {
     }
   }, [isLoaded]);
 
+  useEffect(() => {
+    async function fetchData() {
+      if (user?.id) {
+        const firstChatData: any = await db
+          .select()
+          .from(chats)
+          .where(eq(chats.userId, user.id));
+        if (firstChatData && firstChatData.length > 0) {
+          setFirstChat(firstChatData[0]);
+        }
+      }
+    }
+    fetchData();
+  }, [user]);
+
   if (!isLoaded) {
     return (
       <div className="flex w-screen h-screen items-center justify-center">
@@ -29,6 +47,8 @@ export default function Home() {
       </div>
     );
   }
+
+  console.log(firstChat);
   return (
     <main className="w-screen min-h-screen bg-gradient-to-r from-rose-100 to-teal-100">
       {isLoaded && isSignedIn && (
