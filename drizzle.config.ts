@@ -6,7 +6,7 @@ export default {
   driver: "pg", // postgres
   schema: "./src/lib/db/schema.ts",
   dbCredentials: {
-    connectionString: process.env.DATABASE_URL!,
+    connectionString: process.env.NEXT_PUBLIC_DATABASE_URL!,
   },
 } satisfies Config;
 
