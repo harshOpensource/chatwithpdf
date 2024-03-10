@@ -26,15 +26,6 @@ type PDFPage = {
   };
 };
 
-async function downloadFile(fileUrl: string) {
-  try {
-    const response = await axios.get(fileUrl);
-    return response.data;
-  } catch (error) {
-    console.error("Error downloading file:", error);
-    throw error;
-  }
-}
 function readFileAsDataURL(file: any) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -51,21 +42,25 @@ export async function loadPdftoPinecone(
   // 1 obtain pdf
   console.log("downloading file from uploadthing");
 
-  const response = await axios.get(file_url);
-  const pdfData = Buffer.from(response.data);
+  const response = await axios.get(file_url, { responseType: "arraybuffer" }); // Ensure the response type is arraybuffer for binary data
+  const pdfData = Buffer.from(response.data, "binary"); // Create buffer from binary data
+
+  // Check if temp directory exists, if not create it
+  const tempDirPath = path.join(process.cwd(), "temp");
+  if (!fs.existsSync(tempDirPath)) {
+    fs.mkdirSync(tempDirPath);
+  }
 
   // Save the downloaded file to a temporary location
-  const tempFilePath = path.join(__dirname, "temp", file_name);
+  const tempFilePath = path.join(tempDirPath, file_name);
   fs.writeFileSync(tempFilePath, pdfData);
 
   // Load the PDF file using the local file path
   const pdfLoader = new PDFLoader(tempFilePath);
   const pages = (await pdfLoader.load()) as PDFPage[];
-  console.log("2 step", pages);
 
   // split and segment the pdf
   const docs = await Promise.all(pages.map(prepareDocument));
-  console.log("333333333");
 
   // 3. vectorise and embed individual documents
   const vectors = await Promise.all(docs.flat().map(embedDocument));
@@ -90,6 +85,9 @@ export async function loadPdftoPinecone(
 
 async function embedDocument(doc: Document) {
   try {
+    if (!doc.pageContent) {
+      throw new Error("Document page content is undefined");
+    }
     const embeddings = await getEmbeddings(doc.pageContent);
     const hash = md5(doc.pageContent);
 
