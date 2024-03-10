@@ -1,19 +1,12 @@
 "use client";
-import { Inbox, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useDropzone } from "react-dropzone";
-import { useMutation } from "@tanstack/react-query";
+import { uploadFile } from "@/lib/types";
 import { UploadButton } from "@/lib/uploadthing";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { Inbox } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type Props = {};
-
-type uploadFile = {
-  key: string;
-  name: string;
-  url: string;
-};
 
 const FileUpload = ({}: Props) => {
   const router = useRouter();

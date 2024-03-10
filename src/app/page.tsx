@@ -1,22 +1,24 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { UserButton, auth, currentUser, useUser } from "@clerk/nextjs";
-import Link from "next/link";
-import { ArrowRight, Loader2, LogIn } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
 import FileUpload from "@/components/file-upload";
+import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
 import { chats } from "@/lib/db/schema";
+import { Chat } from "@/lib/types";
+import { UserButton, useUser } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
+import { ArrowRight, Loader2, LogIn } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 
 export default function Home() {
   const { isLoaded, isSignedIn, user } = useUser();
+  const [isLodingChat, setIsLoadingChat] = useState<boolean>(true);
   const isAuth = !!user?.id;
   const isPro = true; // todo check subscription
 
-  const [firstChat, setFirstChat] = useState<any>(null); // State for firstChat
+  const [firstChat, setFirstChat] = useState<Chat | null>(null); // State for firstChat
 
   useEffect(() => {
     if (isLoaded === true && isSignedIn === true) {
@@ -38,9 +40,10 @@ export default function Home() {
       }
     }
     fetchData();
+    setIsLoadingChat(false);
   }, [user]);
 
-  if (!isLoaded) {
+  if (!isLoaded || isLodingChat) {
     return (
       <div className="flex w-screen h-screen items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
@@ -48,7 +51,6 @@ export default function Home() {
     );
   }
 
-  console.log(firstChat);
   return (
     <main className="w-screen min-h-screen bg-gradient-to-r from-rose-100 to-teal-100">
       {isLoaded && isSignedIn && (
@@ -63,7 +65,7 @@ export default function Home() {
           </div>
           {/* Action Buttons */}
           <div className="flex">
-            {isAuth && firstChat && (
+            {isAuth && firstChat !== null && (
               <>
                 <Link href={`/chat/${firstChat?.id}`}>
                   <Button>
