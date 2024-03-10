@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowRight, Loader2, LogIn } from "lucide-react";
 import { useEffect } from "react";
 import { toast } from "react-hot-toast";
+import FileUpload from "@/components/file-upload";
 
 export default function Home() {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -14,6 +15,13 @@ export default function Home() {
 
   let firstChat: any; // todo get the first chat from database
 
+  useEffect(() => {
+    if (isLoaded === true && isSignedIn === true) {
+      toast.dismiss();
+      toast.success(`Welcome ${user.firstName} ${user.lastName}!`);
+    }
+  }, [isLoaded]);
+
   if (!isLoaded) {
     return (
       <div className="flex w-screen h-screen items-center justify-center">
@@ -21,13 +29,6 @@ export default function Home() {
       </div>
     );
   }
-
-  useEffect(() => {
-    if (isLoaded === true && isSignedIn === true) {
-      toast.dismiss();
-      toast.success(`Welcome ${user.firstName} ${user.lastName}!`);
-    }
-  }, [isLoaded]);
   return (
     <main className="w-screen min-h-screen bg-gradient-to-r from-rose-100 to-teal-100">
       {isLoaded && isSignedIn && (
@@ -65,7 +66,9 @@ export default function Home() {
 
           <div className="w-full mt-5">
             {isAuth ? (
-              <>File Upload</>
+              <>
+                <FileUpload />
+              </>
             ) : (
               <Link href={"/sign-in"}>
                 <Button>
