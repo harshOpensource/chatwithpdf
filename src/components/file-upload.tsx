@@ -83,6 +83,7 @@ const FileUpload = ({ setOpen }: Props) => {
                   onError: (error) => {
                     console.log("Error: ", error);
                     setOpen();
+                    setLoading(false);
                   },
                 }
               );
