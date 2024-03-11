@@ -1,9 +1,12 @@
 "use client";
 
+import APIAlert from "@/components/api-alert";
 import FileUpload from "@/components/file-upload";
+import SubscriptionButton from "@/components/subscription-component";
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
 import { chats } from "@/lib/db/schema";
+import { checkSubscription } from "@/lib/subscription";
 import { Chat } from "@/lib/types";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
@@ -15,8 +18,9 @@ import { toast } from "react-hot-toast";
 export default function Home() {
   const { isLoaded, isSignedIn, user } = useUser();
   const [isLodingChat, setIsLoadingChat] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const isAuth = !!user?.id;
-  const isPro = true; // todo check subscription
+  let isPro = false;
 
   const [firstChat, setFirstChat] = useState<Chat | null>(null); // State for firstChat
 
@@ -38,8 +42,10 @@ export default function Home() {
           setFirstChat(firstChatData[0]);
         }
       }
+      isPro = await checkSubscription();
     }
     fetchData();
+
     setIsLoadingChat(false);
   }, [user]);
 
@@ -50,6 +56,10 @@ export default function Home() {
       </div>
     );
   }
+
+  const setOpen = () => {
+    setIsOpen(!isOpen);
+  };
 
   return (
     <main className="w-screen min-h-screen bg-gradient-to-r from-rose-100 to-teal-100">
@@ -73,7 +83,7 @@ export default function Home() {
                   </Button>
                 </Link>
                 <div className="ml-3">
-                  <Button>Subscription Button</Button>
+                  <SubscriptionButton isPro={isPro} />
                 </div>
               </>
             )}
@@ -89,7 +99,7 @@ export default function Home() {
           <div className="w-full mt-5">
             {isAuth ? (
               <>
-                <FileUpload />
+                <FileUpload setOpen={setOpen} />
               </>
             ) : (
               <Link href={"/sign-in"}>
@@ -102,6 +112,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <APIAlert setOpen={setOpen} open={isOpen} />
     </main>
   );
 }

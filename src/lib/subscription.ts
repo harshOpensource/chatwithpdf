@@ -1,3 +1,5 @@
+"use server";
+
 import { auth } from "@clerk/nextjs";
 import { db } from "./db";
 import { userSubscriptions } from "./db/schema";

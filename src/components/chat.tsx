@@ -25,8 +25,6 @@ function Chat({ chatId }: Props) {
     },
   });
 
-  console.log(data);
-
   const { input, handleInputChange, handleSubmit, messages } = useChat({
     api: "/api/chat",
     body: {
@@ -47,13 +45,13 @@ function Chat({ chatId }: Props) {
 
   return (
     <div
-      className="h-screen flex flex-col overflow-scroll scrollbar-hide px-4"
+      className="h-screen flex flex-col overflow-hidden scrollbar-hide px-4"
       id="message-container"
     >
       <div className="flex-[0] top-0 inset-x-0 p-2 bg-white h-fit">
         <h3 className="text-xl font-bold">Chat with your Pdf</h3>
       </div>
-      <div className="flex-[1]">
+      <div className="flex-[1] overflow-scroll scrollbar-hide py-8">
         <MessageList messages={messages} isLoading={isLoading} />
       </div>
       <div className="flex-[0] bottom-0 inset-x-0 px-2 py-4 bg-white">

@@ -19,8 +19,13 @@ const SubscriptionButton = (props: Props) => {
     }
   };
   return (
-    <Button disabled={loading} onClick={handleSubscription} variant="outline">
-      {props.isPro ? "Manage Subscriptions" : "Get Pro"}
+    <Button
+      disabled={loading}
+      onClick={handleSubscription}
+      variant="outline"
+      className="text-black hover:text-gray-950 w-full text-center"
+    >
+      {props.isPro ? "Manage Subscriptions" : "Get chatPDF Pro!"}
     </Button>
   );
 };

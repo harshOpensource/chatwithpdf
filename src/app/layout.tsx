@@ -11,6 +11,14 @@ export const metadata: Metadata = {
   title: "Chat With Pdf",
   description:
     "Chat With Pdf is a AI based SAAS to be used to interact with PDFs.",
+  icons: {
+    icon: [
+      {
+        url: "/logo.png",
+        href: "/logo.png",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({

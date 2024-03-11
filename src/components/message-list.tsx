@@ -18,13 +18,13 @@ function MessageList({ messages, isLoading }: Props) {
   }
   if (!messages) return <></>;
   return (
-    <div className="flex flex-col gap-2 px-4">
+    <div className="flex flex-col gap-2 px-4 pb-8  overflow-y-scroll scrollbar-hide">
       {messages.map((message) => {
         return (
           <div
             key={message.id}
             className={cn("flex", {
-              "justify-end pl-10": message.role === "user",
+              "justify-end pl-10 py-4": message.role === "user",
               "justify-start pr-10": message.role === "assistant",
             })}
           >
