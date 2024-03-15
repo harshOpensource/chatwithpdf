@@ -1,4 +1,9 @@
-## Overview
+
+![chat](https://github.com/harshOpensource/chatwithpdf/assets/135038577/7c3cc943-d1b1-449c-bd1b-019204f5125e)
+
+![chatwithpdf](https://github.com/harshOpensource/chatwithpdf/assets/135038577/dbd33832-a1d6-4646-88c6-11a6b1bbe7ab)
+
+# Overview
 
 Welcome to the "Chat With PDF" project, a comprehensive chat application with PDF integration. This project is designed to provide a seamless chat experience where users can upload PDF files, create chats around them, and interact with an AI assistant. The AI assistant uses the OpenAI API to generate responses based on the chat context. The application also includes a subscription feature, where users can subscribe to access premium features. The subscription process is handled using Stripe for payments and webhooks for event processing.
 
